@@ -1,5 +1,5 @@
 {
-  "name": "bytewatch-stremio-addon",
+  "name": "HOTDOG-stremio-addon",
   "version": "1.0.0",
   "description": "Get stream links for tv shows and movies",
   "main": "index.js",

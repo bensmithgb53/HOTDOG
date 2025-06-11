@@ -124,11 +124,11 @@ async function getSeriesStreams(imdbId, season, episode) {
     return Object.entries(cached).map(([name, url]) => ({
       name,
       url,
-      description: metadata ? `${metadata.Title} S${season}E${episode}` : `Series ${imdbId}`
+      description: metadata ? `${metadata.Title} ${season}E${episode}` : `Series ${imdbId}`
     }));
   }
 
-  const streams = await extractAllStreams({ type: 'series', imdbId, season, episode });
+  const streams = await extractAllStreams({ type, imdbId, season, episode });
   if (Object.keys(streams).length > 0) {
     streamCache.set(cacheKey, streams);
     logger.info(`Cached streams for series ${imdbId} S${season}E${episode}`);
@@ -137,7 +137,7 @@ async function getSeriesStreams(imdbId, season, episode) {
   return Object.entries(streams).map(([name, url]) => ({
     name,
     url,
-    description: metadata ? `${metadata.Title} S${season}E${episode}` : `Series ${imdbId}`
+    description: metadata ? `${metadata.Title} ${season}E${episode}` : `Series ${imdbId}`
   }));
 }
 

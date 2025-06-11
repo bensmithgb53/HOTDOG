@@ -1,8 +1,10 @@
 const { addonBuilder } = require('stremio-addon-sdk');
 const NodeCache = require('node-cache');
 const axios = require('axios');
-const logger = require('../logger'); // Ensure logger.js is in the parent directory
-const extractor = require('../unified-extractor'); // Ensure unified-extractor.js is in the parent directory
+// Fix: Adjust paths for logger and extractor
+const logger = require('../../logger'); // Go up two directories from api/[...stremio].js
+const extractor = require('../../unified-extractor'); // Go up two directories from api/[...stremio].js
+
 
 const builder = new addonBuilder({
   id: 'org.bytetan.bytewatch',

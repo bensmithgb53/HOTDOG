@@ -1,8 +1,8 @@
 const { addonBuilder } = require('stremio-addon-sdk');
 const NodeCache = require('node-cache');
 const axios = require('axios');
-const logger = require('../logger');
-const extractor = require('../unified-extractor');
+const logger = require('../logger'); // Ensure logger.js is in the parent directory
+const extractor = require('../unified-extractor'); // Ensure unified-extractor.js is in the parent directory
 
 const builder = new addonBuilder({
   id: 'org.bytetan.bytewatch',
@@ -39,7 +39,7 @@ async function fetchTmdbId(imdbId) {
       {
         headers: {
           accept: 'application/json',
-          Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3M2EyNzkwNWM1Y2IzNjE1NDUyOWNhN2EyODEyMzc0NCIsIm5iZiI6MS43MjM1ODA5NTAwMDg5OTk4ZSs5LCJzdWIiOiI2NmJiYzIxNjI2NmJhZmVmMTQ4YzVkYzkiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.y7N6qt4Lja5M6wnFkqqo44mzEMJ60Pzvm0z_TfA1vxk'
+          Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3M2EyNzkwNWM1Y2IzNjE1NDUyOWNhN2EyODEyMzc0NCIsIm5iZiI6MS43MjM1ODA5NTAwMDg5OTk4ZSs5LCJzdWI6IjY2YmJjMjE2MjY2YmFmZWYxNDhjNWQ0OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.y7N6qt4Lja5M6wnFkqqo44mzEMJ60Pzvm0z_TfA1vxk'
         }
       }
     );
@@ -162,14 +162,13 @@ builder.defineStreamHandler(async ({ type, id }) => {
   }
 });
 
+// This is the Vercel serverless function entry point
 module.exports = (req, res) => {
   try {
     const addonInterface = builder.getInterface();
-    logger.info(`Using stremio-addon-sdk version: ${require('stremio-addon-sdk/package.json').version}`);
     const router = addonInterface.getRouter();
-    router(req, res, () => {
-      res.status(404).json({ error: 'Not Found' });
-    });
+    // Pass the request and response directly to the SDK's router
+    router(req, res);
   } catch (error) {
     logger.error(`Handler error: ${error.message}`);
     res.status(500).json({ error: 'Internal Server Error' });

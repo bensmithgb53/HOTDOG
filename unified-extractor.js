@@ -5,11 +5,11 @@ const extractors = {
     broflix: (type, id, season, episode) =>
         type === 'movie'
             ? `https://broflix.si/watch/movie/${id}`
-            : `https://broflix.si/watch/tv/${id}?season=${season}&episode=${episode}`,
+            : `https://broflix.si/watch/tv/${season}/${episode}/${id}`,
     fmovies: (type, id, season, episode) =>
         type === 'movie'
-            ? `https://fmovies.cat/watch/movie/${id}`
-            : `https://fmovies.cat/watch/tv/${id}/${season}/${episode}`,
+            ? `https://fmovies.cat/${id}`
+            : `https://fmovies.cat/${season}/${episode}/${id}`,
     videasy: (type, id, season, episode) =>
         type === 'movie'
             ? `https://player.videasy.net/movie/${id}`
@@ -25,7 +25,7 @@ const extractors = {
 };
 
 function randomUserAgent() {
-    const versions = ['114.5835.198', '113.5152.126', '112.5885.138'];
+    const versions = ['114.0.5735.198', '113.0.5672.126', '112.0.5615.138'];
     const version = versions[Math.floor(Math.random() * versions.length)];
     return `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${version} Safari/537.36`;
 }
@@ -42,7 +42,6 @@ async function runExtractor(source, type, imdbId, season = null, episode = null)
     let browser;
     try {
         browser = await puppeteer.launch({
-            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null,
             headless: "new",
             args: [
                 "--no-sandbox",
@@ -79,7 +78,7 @@ async function runExtractor(source, type, imdbId, season = null, episode = null)
                 url.includes('analytics') ||
                 url.includes('ads') ||
                 url.includes('social') ||
-                url.includes('disable-dev-tools') ||
+                url.includes('disable-devtool') ||
                 url.includes('cloudflareinsights') ||
                 url.includes('ainouzaudre') ||
                 url.includes('pixel.embed') ||
@@ -96,7 +95,7 @@ async function runExtractor(source, type, imdbId, season = null, episode = null)
         });
 
         logger.info(`Navigating to ${url}`);
-        await page.goto(url, { waitUntil: 'networkidle2', timeout: 15000 });
+        await page.goto(url, { waitUntil: 'networkidle2', timeout: 10000 });
 
         if (source === 'videasy') {
             try {

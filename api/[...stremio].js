@@ -124,11 +124,11 @@ async function getSeriesStreams(imdbId, season, episode) {
     return Object.entries(cached).map(([name, url]) => ({
       name,
       url,
-      description: metadata ? `${metadata.Title} ${season}E${episode}` : `Series ${imdbId}`
+      description: metadata ? `${metadata.Title} S${season}E${episode}` : `Series ${imdbId}`
     }));
   }
 
-  const streams = await extractAllStreams({ type, imdbId, season, episode });
+  const streams = await extractAllStreams({ type: 'series', imdbId, season, episode });
   if (Object.keys(streams).length > 0) {
     streamCache.set(cacheKey, streams);
     logger.info(`Cached streams for series ${imdbId} S${season}E${episode}`);
@@ -137,7 +137,7 @@ async function getSeriesStreams(imdbId, season, episode) {
   return Object.entries(streams).map(([name, url]) => ({
     name,
     url,
-    description: metadata ? `${metadata.Title} ${season}E${episode}` : `Series ${imdbId}`
+    description: metadata ? `${metadata.Title} S${season}E${episode}` : `Series ${imdbId}`
   }));
 }
 
@@ -162,20 +162,14 @@ builder.defineStreamHandler(async ({ type, id }) => {
   }
 });
 
-module.exports = async (req, res) => {
+module.exports = (req, res) => {
   try {
     const addonInterface = builder.getInterface();
     logger.info(`Using stremio-addon-sdk version: ${require('stremio-addon-sdk/package.json').version}`);
-    const { publishToWeb } = require('stremio-addon-sdk');
-    if (typeof publishToWeb === 'function') {
-      await publishToWeb(addonInterface)(req, res);
-    } else {
-      logger.warn('publishToWeb not available, falling back to getRouter');
-      const router = addonInterface.getRouter();
-      router(req, res, () => {
-        res.status(404).json({ error: 'Not Found' });
-      });
-    }
+    const router = addonInterface.getRouter();
+    router(req, res, () => {
+      res.status(404).json({ error: 'Not Found' });
+    });
   } catch (error) {
     logger.error(`Handler error: ${error.message}`);
     res.status(500).json({ error: 'Internal Server Error' });

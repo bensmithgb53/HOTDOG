@@ -25,7 +25,7 @@ const extractors = {
 };
 
 function randomUserAgent() {
-    const versions = ['114.0.5735.198', '113.0.5672.126', '112.0.5615.138'];
+    const versions = ['114.5835.198', '113.5152.126', '112.5885.138'];
     const version = versions[Math.floor(Math.random() * versions.length)];
     return `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${version} Safari/537.36`;
 }
@@ -79,7 +79,7 @@ async function runExtractor(source, type, imdbId, season = null, episode = null)
                 url.includes('analytics') ||
                 url.includes('ads') ||
                 url.includes('social') ||
-                url.includes('disable-devtool') ||
+                url.includes('disable-dev-tools') ||
                 url.includes('cloudflareinsights') ||
                 url.includes('ainouzaudre') ||
                 url.includes('pixel.embed') ||
@@ -133,7 +133,7 @@ async function runExtractor(source, type, imdbId, season = null, episode = null)
             setTimeout(() => {
                 clearInterval(interval);
                 resolve();
-            }, 15000);
+            }, 10000);
         });
 
         if (Object.keys(streamUrls).length === 0) {

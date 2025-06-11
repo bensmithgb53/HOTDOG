@@ -1,4 +1,4 @@
-const { addonBuilder } = require('stremio-addon-sdk');
+const { addonBuilder, publishToWeb } = require('stremio-addon-sdk');
 const NodeCache = require('node-cache');
 const axios = require('axios');
 const logger = require('../logger');
@@ -163,6 +163,11 @@ builder.defineStreamHandler(async ({ type, id }) => {
 });
 
 module.exports = async (req, res) => {
-  const addon = builder.getInterface();
-  await addon(req, res);
+  try {
+    const addonInterface = builder.getInterface();
+    await publishToWeb(addonInterface)(req, res);
+  } catch (error) {
+    logger.error(`Handler error: ${error.message}`);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 };

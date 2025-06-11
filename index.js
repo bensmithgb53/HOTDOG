@@ -113,7 +113,7 @@ async function getMovieStreams(imdbId) {
         name,
         url,
         description: metadata ? `${metadata.Title} (${metadata.Year})` : `Movie ${imdbId}`
-    }));
+        }));
 }
 
 async function getSeriesStreams(imdbId, season, episode) {
@@ -140,7 +140,7 @@ async function getSeriesStreams(imdbId, season, episode) {
         name,
         url,
         description: metadata ? `${metadata.Title} S${season}E${episode}` : `Series ${imdbId}`
-    }));
+        }));
 }
 
 builder.defineStreamHandler(async ({ type, id }) => {

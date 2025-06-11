@@ -1,10 +1,8 @@
 const { addonBuilder } = require('stremio-addon-sdk');
 const NodeCache = require('node-cache');
 const axios = require('axios');
-// Fix: Adjust paths for logger and extractor
-const logger = require('../../logger'); // Go up two directories from api/[...stremio].js
-const extractor = require('../../unified-extractor'); // Go up two directories from api/[...stremio].js
-
+const logger = require('../../logger'); // This path should be correct if logger.js is at the project root
+const extractor = require('../../unified-extractor'); // This path should be correct if unified-extractor.js is at the project root
 
 const builder = new addonBuilder({
   id: 'org.bytetan.bytewatch',
@@ -41,7 +39,7 @@ async function fetchTmdbId(imdbId) {
       {
         headers: {
           accept: 'application/json',
-          Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3M2EyNzkwNWM1Y2IzNjE1NDUyOWNhN2EyODEyMzc0NCIsIm5iZiI6MS43MjM1ODA5NTAwMDg5OTk4ZSs5LCJzdWI6IjY2YmJjMjE2MjY2YmFmZWYxNDhjNWQ0OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.y7N6qt4Lja5M6wnFkqqo44mzEMJ60Pzvm0z_TfA1vxk'
+          Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3M2EyNzkwNWM1Y2IzNjE1NDUyOWNhN2EyODEyMzc0NCIsIm5iZiI6MS43MjM1ODA5NTAwMDg5OTk4ZSs5LCJzdWI6IjY2YmJjMjE2MjY2YmFmZWYxNDhjNWQ0OSIsInNjb3BlcyI6WyJhcGdfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.y7N6qt4Lja5M6wnFkqqo44mzEMJ60Pzvm0z_TfA1vxk'
         }
       }
     );
@@ -164,15 +162,6 @@ builder.defineStreamHandler(async ({ type, id }) => {
   }
 });
 
-// This is the Vercel serverless function entry point
-module.exports = (req, res) => {
-  try {
-    const addonInterface = builder.getInterface();
-    const router = addonInterface.getRouter();
-    // Pass the request and response directly to the SDK's router
-    router(req, res);
-  } catch (error) {
-    logger.error(`Handler error: ${error.message}`);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
+// This is the CRITICAL change for Vercel serverless functions
+// The SDK directly exposes its handler for module.exports
+module.exports = builder.get ");

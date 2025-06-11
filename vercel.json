@@ -4,5 +4,11 @@
       "source": "/(.*)",
       "destination": "/api/stremio"
     }
-  ]
+  ],
+  "functions": {
+    "api/[...stremio].js": {
+      "memory": 128,
+      "maxDuration": 10
+    }
+  }
 }

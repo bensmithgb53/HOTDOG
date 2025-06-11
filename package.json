@@ -1,1 +1,23 @@
-u
+{
+  "name": "bytewatch-stremio-addon",
+  "version": "1.0.0",
+  "description": "Get stream links for tv shows and movies",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["stremio", "addon", "streaming"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.7",
+    "node-cache": "^5.1.2",
+    "puppeteer": "^23.4.1",
+    "stremio-addon-sdk": "^1.7.0",
+    "winston": "^3.14.2"
+  },
+  "engines": {
+    "node": "20.x"
+  }
+}

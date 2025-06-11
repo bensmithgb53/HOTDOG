@@ -82,4 +82,87 @@ async function extractAllStreams({ type, imdbId, season, episode }) {
             }
             logger.info(`Extracted streams from ${source}: ${JSON.stringify(result.value)}`);
         } else {
-            logger.warn(`Extraction failed for ${source}: ${result.reason
+            logger.warn(`Extraction failed for ${source}: ${result.reason?.message || 'No streams found'}`);
+        }
+    });
+
+    return streams;
+}
+
+async function getMovieStreams(imdbId) {
+    const cacheKey = `movie:${imdbId}`;
+    const metadata = await fetchOmdbDetails(imdbId);
+
+    const cached = streamCache.get(cacheKey);
+    if (cached) {
+        logger.info(`Cache hit for movie ${imdbId}`);
+        return Object.entries(cached).map(([name, url]) => ({
+            name,
+            url,
+            description: metadata ? `${metadata.Title} (${metadata.Year})` : `Movie ${imdbId}`
+        }));
+    }
+
+    const streams = await extractAllStreams({ type: 'movie', imdbId });
+    if (Object.keys(streams).length > 0) {
+        streamCache.set(cacheKey, streams);
+        logger.info(`Cached streams for movie ${imdbId}`);
+    }
+
+    return Object.entries(streams).map(([name, url]) => ({
+        name,
+        url,
+        description: metadata ? `${metadata.Title} (${metadata.Year})` : `Movie ${imdbId}`
+    }));
+}
+
+async function getSeriesStreams(imdbId, season, episode) {
+    const cacheKey = `series:${imdbId}:${season}:${episode}`;
+    const metadata = await fetchOmdbDetails(imdbId);
+
+    const cached = streamCache.get(cacheKey);
+    if (cached) {
+        logger.info(`Cache hit for series ${imdbId} S${season}E${episode}`);
+        return Object.entries(cached).map(([name, url]) => ({
+            name,
+            url,
+            description: metadata ? `${metadata.Title} S${season}E${episode}` : `Series ${imdbId}`
+        }));
+    }
+
+    const streams = await extractAllStreams({ type: 'series', imdbId, season, episode });
+    if (Object.keys(streams).length > 0) {
+        streamCache.set(cacheKey, streams);
+        logger.info(`Cached streams for series ${imdbId} S${season}E${episode}`);
+    }
+
+    return Object.entries(streams).map(([name, url]) => ({
+        name,
+        url,
+        description: metadata ? `${metadata.Title} S${season}E${episode}` : `Series ${imdbId}`
+    }));
+}
+
+builder.defineStreamHandler(async ({ type, id }) => {
+    logger.info(`Stream request: ${type} ${id}`);
+    try {
+        if (type === 'movie') {
+            const imdbId = id.split(':')[0];
+            const streams = await getMovieStreams(imdbId);
+            return { streams };
+        }
+        if (type === 'series') {
+            const [imdbId, season, episode] = id.split(':');
+            const streams = await getSeriesStreams(imdbId, season, episode);
+            return { streams };
+        }
+        logger.warn(`Unsupported type: ${type}`);
+        return { streams: [] };
+    } catch (error) {
+        logger.error(`Stream handler error: ${error.message}`);
+        return { streams: [] };
+    }
+});
+
+serveHTTP(builder.getInterface(), { port: PORT, hostname: "0.0.0.0" });
+logger.info(`Addon running on port ${PORT}`);

@@ -1,4 +1,4 @@
-const { addonBuilder, publishToWeb } = require('stremio-addon-sdk');
+const { addonBuilder } = require('stremio-addon-sdk');
 const NodeCache = require('node-cache');
 const axios = require('axios');
 const logger = require('../logger');
@@ -165,7 +165,17 @@ builder.defineStreamHandler(async ({ type, id }) => {
 module.exports = async (req, res) => {
   try {
     const addonInterface = builder.getInterface();
-    await publishToWeb(addonInterface)(req, res);
+    logger.info(`Using stremio-addon-sdk version: ${require('stremio-addon-sdk/package.json').version}`);
+    const { publishToWeb } = require('stremio-addon-sdk');
+    if (typeof publishToWeb === 'function') {
+      await publishToWeb(addonInterface)(req, res);
+    } else {
+      logger.warn('publishToWeb not available, falling back to getRouter');
+      const router = addonInterface.getRouter();
+      router(req, res, () => {
+        res.status(404).json({ error: 'Not Found' });
+      });
+    }
   } catch (error) {
     logger.error(`Handler error: ${error.message}`);
     res.status(500).json({ error: 'Internal Server Error' });

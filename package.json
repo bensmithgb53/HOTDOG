@@ -2,10 +2,11 @@
   "name": "HOTDOG-stremio-addon",
   "version": "1.0.0",
   "description": "Get stream links for tv shows and movies",
-  "main": "index.js",
+  "main": "api/[...stremio].js",
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node api/[...stremio].js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "vercel-build": "echo 'Build complete'"
   },
   "keywords": ["stremio", "addon", "streaming"],
   "author": "",
@@ -15,6 +16,9 @@
     "node-cache": "^5.1.2",
     "stremio-addon-sdk": "^1.1.6",
     "winston": "^3.14.2"
+  },
+  "devDependencies": {
+    "vercel": "^36.0.0"
   },
   "engines": {
     "node": "20.x"

@@ -33,8 +33,7 @@ COPY . .
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 # Expose the port your application will run on
-# Your index.js uses PORT from environment, otherwise defaults to 7000
-EXPOSE 7000
+EXPOSE 5000 # CHANGE THIS LINE from 7000 to 5000
 
 # Command to run your application when the container starts
 CMD ["npm", "start"]

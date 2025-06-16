@@ -32,8 +32,10 @@ COPY . .
 # This is a common path for system-installed Chromium on Debian/Ubuntu-based images.
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
-# Expose the port your application will run on
-EXPOSE 5000 # CHANGE THIS LINE from 7000 to 5000
+# Expose the port your application will run on.
+# Dokku will inject the PORT environment variable.
+# Exposing 80 is a common convention for web servers when proxying.
+EXPOSE 80
 
 # Command to run your application when the container starts
 CMD ["npm", "start"]

@@ -1,10 +1,11 @@
-const { addonBuilder, serveHTTP }  = require('stremio-addon-sdk');
+const { addonBuilder, serveHTTP } = require('stremio-addon-sdk');
 const NodeCache = require('node-cache');
 const axios = require('axios');
 const logger = require('./logger');
 const extractor = require('./unified-extractor');
 
-const PORT = process.env.PORT || 7000;
+// Use process.env.PORT which Dokku (BeamUp) provides, or default to 80 for common web server setups
+const PORT = process.env.PORT || 80;
 
 const builder = new addonBuilder({
     id: 'org.bytetan.bytewatch',
@@ -43,7 +44,7 @@ async function fetchTmdbId(imdbId){
               method: 'GET',
               headers: {
                   accept: 'application/json',
-                  Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3M2EyNzkwNWM1Y2IzNjE1NDUyOWNhN2EyODEyMzc0NCIsIm5iZiI6MS43MjM1ODA5NTAwMDg5OTk4ZSs5LCJzdWIiOiI2NmJiYzIxNjI2NmJhZmVmMTQ4YzVkYzkiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.y7N6qt4Lja5M6wnFkqqo44mzEMJ60Pzvm0z_TfA1vxk'
+                  Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3M2EyNzkwNWM1Y2IzNjE1NDUyOWNhN2EyODEyMzc0NCIsIm5iZiI6MS43MjM1ODA5NTAwMDg5OTk4ZSs5LCJzdWI6IjY2YmJjMjE2MjY2YmFmZWYxNDhjNWRjOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.y7N6qt4Lja5M6wnFkqqo44mzEMJ60Pzvm0z_TfA1vxk'
               }
           });
       return response.data;
@@ -174,7 +175,6 @@ async function getSeriesStreams(imdbId, season, episode) {
         description: `${metadata.Title} S${season}E${episode}`
     }));
 }
-
 
 
 builder.defineStreamHandler(async ({type, id}) => {
